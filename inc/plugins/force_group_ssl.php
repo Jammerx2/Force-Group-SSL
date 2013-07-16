@@ -80,6 +80,11 @@
 			header("Location: $url"); 
 			exit;
 		}
+		
+		if($_SERVER['HTTPS'] == "on")
+		{
+			$mybb->settings['bburl'] = preg_replace("/^http:\/\//i", "https://", $mybb->settings['bburl']);
+		}
 	}
 	
 	/**

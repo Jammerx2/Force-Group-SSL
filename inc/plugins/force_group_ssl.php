@@ -74,7 +74,7 @@
 	{
 		global $mybb;
 		
-		if($mybb->usergroup['forcessl'] == 1 && ($_SERVER['HTTPS'] != "on" || (isset($_SERVER['HTTP_CF_VISITOR']) && strpos($_SERVER['HTTP_CF_VISITOR'], 'https'))))
+		if($mybb->usergroup['forcessl'] == 1 && ($_SERVER['HTTPS'] != "on" && !(isset($_SERVER['HTTP_CF_VISITOR']) && strpos($_SERVER['HTTP_CF_VISITOR'], 'https'))))
 		{
 			$url = "https://". $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI']; 
 			header("Location: $url"); 

@@ -74,14 +74,14 @@
 	{
 		global $mybb;
 		
-		if($mybb->usergroup['forcessl'] == 1 && ($_SERVER['HTTPS'] != "on" && !(isset($_SERVER['HTTP_CF_VISITOR']) && strpos($_SERVER['HTTP_CF_VISITOR'], 'https'))))
+		if($mybb->usergroup['forcessl'] == 1 && (!checkHTTPS() && !(isset($_SERVER['HTTP_CF_VISITOR']) && strpos($_SERVER['HTTP_CF_VISITOR'], 'https'))))
 		{
 			$url = "https://". $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI']; 
 			header("Location: $url"); 
 			exit;
 		}
 		
-		if($_SERVER['HTTPS'] == "on")
+		if(checkHTTPS() || (isset($_SERVER['HTTP_CF_VISITOR']) && strpos($_SERVER['HTTP_CF_VISITOR'], 'https')))
 		{
 			$mybb->settings['bburl'] = preg_replace("/^http:\/\//i", "https://", $mybb->settings['bburl']);
 		}
@@ -122,6 +122,25 @@
 			if(!isset($mybb->input['forcessl'])) $mybb->input['forcessl'] = $usergroup['forcessl'];
 			$form_container->output_row($lang->force_group_ssl, "", "<div class=\"group_settings_bit\">".$form->generate_check_box("forcessl", 1, $lang->force_group_ssl_checkbox, array("checked" => $mybb->input['forcessl']))."</div>", "forcessl");
 		}
+	}
+	
+	/**
+	 *  Check to see if the connection is made via HTTPS.
+	 *  Taken from StackOverflow: http://stackoverflow.com/questions/11650640/why-isnt-serverhttps-set-to-1
+	 *  
+	 *  @return bool Whether or not the connection is HTTPS.
+	 */
+	function checkHTTPS() {
+		if(!empty($_SERVER['HTTPS']))
+			if($_SERVER['HTTPS'] !== 'off')
+				return true; //https
+			else
+				return false; //http
+		 else
+			if($_SERVER['SERVER_PORT'] == 443)
+				return true; //https
+			else
+				return false; //http
 	}
 	
 ?>
